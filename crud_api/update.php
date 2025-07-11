@@ -1,10 +1,26 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
 include "db.php";
-$id=2;
-$new_lname="ahmed";
-$sql="UPDATE users SET lname='$new_lname' WHERE id=$id";
-if($conn->query($sql)==true){
-    echo "record updated";}
-    else{
-        echo "error!".$conn->error;}
-        ?>
+
+$data = json_decode(file_get_contents("php://input"), true);
+
+$id    = $data['id'];
+$fname = $data['fname'];
+$lname = $data['lname'];
+$age   = $data['age'];
+
+$sql = "UPDATE users SET fname=?, lname=?, age=? WHERE id=?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ssii", $fname, $lname, $age, $id);
+$stmt->execute();
+
+if ($stmt->affected_rows > 0) {
+    echo json_encode(["message" => "✅ User updated successfully"]);
+} else {
+    echo json_encode(["message" => "ℹ️ No changes made"]);
+}
+?>
+

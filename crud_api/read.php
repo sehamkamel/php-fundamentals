@@ -1,13 +1,15 @@
 <?php
 include "db.php";
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
-$sql="SELECT * FROM users";
-$result=$conn->query($sql);
-if($result->num_rows > 0){
-    while($row=$result->fetch_assoc()){
-         echo "ID: " . $row["id"] . " LastName: " .  $row["lname"] . "FirstName: " . $row["fname"] . " Age: " . $row["age"] . "<br>";
-}}
-else{
-    echo "no records found";
+$sql = "SELECT * FROM users";
+$result = $conn->query($sql);
+
+$users = [];
+while ($row = $result->fetch_assoc()) {
+    $users[] = $row;
 }
-?>
+
+echo json_encode($users);
